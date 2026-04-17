@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Coffee } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,17 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [adminExists, setAdminExists] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { count } = await supabase
+        .from("user_roles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "admin");
+      setAdminExists((count ?? 0) > 0);
+    })();
+  }, []);
 
   if (isAuthenticated) {
     navigate({ to: "/dashboard" });
@@ -83,12 +95,14 @@ function LoginPage() {
                 {busy ? "Memproses..." : "Masuk"}
               </Button>
             </form>
-            <p className="text-xs text-muted-foreground text-center mt-6">
-              Belum punya akun?{" "}
-              <Link to="/setup" className="text-primary hover:underline font-medium">
-                Buat admin pertama
-              </Link>
-            </p>
+            {!adminExists && (
+              <p className="text-xs text-muted-foreground text-center mt-6">
+                Belum ada admin?{" "}
+                <Link to="/setup" className="text-primary hover:underline font-medium">
+                  Buat admin pertama
+                </Link>
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>

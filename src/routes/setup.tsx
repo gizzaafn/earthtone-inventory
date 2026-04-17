@@ -108,10 +108,11 @@ function SetupPage() {
             {adminExists ? (
               <div className="text-center py-6">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Admin sudah dibuat. Setup tidak lagi tersedia.
+                  Admin sudah dibuat. Setup tidak lagi tersedia. Silakan masuk dengan akun yang ada,
+                  atau hubungi admin untuk membuatkan akun baru.
                 </p>
                 <Button asChild className="w-full">
-                  <Link to="/login">Ke Halaman Login</Link>
+                  <Link to="/login">Kembali ke Halaman Login</Link>
                 </Button>
               </div>
             ) : (
