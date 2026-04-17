@@ -14,6 +14,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppInventoryKitchenRouteImport } from './routes/_app/inventory.kitchen'
+import { Route as AppInventoryBarRouteImport } from './routes/_app/inventory.bar'
 
 const SetupRoute = SetupRouteImport.update({
   id: '/setup',
@@ -39,18 +41,32 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInventoryKitchenRoute = AppInventoryKitchenRouteImport.update({
+  id: '/inventory/kitchen',
+  path: '/inventory/kitchen',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryBarRoute = AppInventoryBarRouteImport.update({
+  id: '/inventory/bar',
+  path: '/inventory/bar',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/setup': typeof SetupRoute
   '/dashboard': typeof AppDashboardRoute
+  '/inventory/bar': typeof AppInventoryBarRoute
+  '/inventory/kitchen': typeof AppInventoryKitchenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/setup': typeof SetupRoute
   '/dashboard': typeof AppDashboardRoute
+  '/inventory/bar': typeof AppInventoryBarRoute
+  '/inventory/kitchen': typeof AppInventoryKitchenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,13 +75,35 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/setup': typeof SetupRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/inventory/bar': typeof AppInventoryBarRoute
+  '/_app/inventory/kitchen': typeof AppInventoryKitchenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/setup' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/setup'
+    | '/dashboard'
+    | '/inventory/bar'
+    | '/inventory/kitchen'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/setup' | '/dashboard'
-  id: '__root__' | '/' | '/_app' | '/login' | '/setup' | '/_app/dashboard'
+  to:
+    | '/'
+    | '/login'
+    | '/setup'
+    | '/dashboard'
+    | '/inventory/bar'
+    | '/inventory/kitchen'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/login'
+    | '/setup'
+    | '/_app/dashboard'
+    | '/_app/inventory/bar'
+    | '/_app/inventory/kitchen'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -112,15 +150,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/inventory/kitchen': {
+      id: '/_app/inventory/kitchen'
+      path: '/inventory/kitchen'
+      fullPath: '/inventory/kitchen'
+      preLoaderRoute: typeof AppInventoryKitchenRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/bar': {
+      id: '/_app/inventory/bar'
+      path: '/inventory/bar'
+      fullPath: '/inventory/bar'
+      preLoaderRoute: typeof AppInventoryBarRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
+  AppInventoryBarRoute: typeof AppInventoryBarRoute
+  AppInventoryKitchenRoute: typeof AppInventoryKitchenRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
+  AppInventoryBarRoute: AppInventoryBarRoute,
+  AppInventoryKitchenRoute: AppInventoryKitchenRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
