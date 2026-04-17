@@ -13,6 +13,8 @@ import { Route as SetupRouteImport } from './routes/setup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppUsersRouteImport } from './routes/_app/users'
+import { Route as AppReportsRouteImport } from './routes/_app/reports'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppInventoryKitchenRouteImport } from './routes/_app/inventory.kitchen'
 import { Route as AppInventoryBarRouteImport } from './routes/_app/inventory.bar'
@@ -36,6 +38,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -57,6 +69,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/setup': typeof SetupRoute
   '/dashboard': typeof AppDashboardRoute
+  '/reports': typeof AppReportsRoute
+  '/users': typeof AppUsersRoute
   '/inventory/bar': typeof AppInventoryBarRoute
   '/inventory/kitchen': typeof AppInventoryKitchenRoute
 }
@@ -65,6 +79,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/setup': typeof SetupRoute
   '/dashboard': typeof AppDashboardRoute
+  '/reports': typeof AppReportsRoute
+  '/users': typeof AppUsersRoute
   '/inventory/bar': typeof AppInventoryBarRoute
   '/inventory/kitchen': typeof AppInventoryKitchenRoute
 }
@@ -75,6 +91,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/setup': typeof SetupRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/reports': typeof AppReportsRoute
+  '/_app/users': typeof AppUsersRoute
   '/_app/inventory/bar': typeof AppInventoryBarRoute
   '/_app/inventory/kitchen': typeof AppInventoryKitchenRoute
 }
@@ -85,6 +103,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/setup'
     | '/dashboard'
+    | '/reports'
+    | '/users'
     | '/inventory/bar'
     | '/inventory/kitchen'
   fileRoutesByTo: FileRoutesByTo
@@ -93,6 +113,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/setup'
     | '/dashboard'
+    | '/reports'
+    | '/users'
     | '/inventory/bar'
     | '/inventory/kitchen'
   id:
@@ -102,6 +124,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/setup'
     | '/_app/dashboard'
+    | '/_app/reports'
+    | '/_app/users'
     | '/_app/inventory/bar'
     | '/_app/inventory/kitchen'
   fileRoutesById: FileRoutesById
@@ -143,6 +167,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/users': {
+      id: '/_app/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reports': {
+      id: '/_app/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
@@ -169,12 +207,16 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
+  AppReportsRoute: typeof AppReportsRoute
+  AppUsersRoute: typeof AppUsersRoute
   AppInventoryBarRoute: typeof AppInventoryBarRoute
   AppInventoryKitchenRoute: typeof AppInventoryKitchenRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
+  AppReportsRoute: AppReportsRoute,
+  AppUsersRoute: AppUsersRoute,
   AppInventoryBarRoute: AppInventoryBarRoute,
   AppInventoryKitchenRoute: AppInventoryKitchenRoute,
 }
