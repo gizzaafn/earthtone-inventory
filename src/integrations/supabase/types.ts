@@ -14,16 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      inventory_items: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          current_stock: number
+          department: Database["public"]["Enums"]["department"]
+          id: string
+          min_stock: number
+          name: string
+          notes: string | null
+          unit: string
+          unit_price_idr: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          created_by?: string | null
+          current_stock?: number
+          department: Database["public"]["Enums"]["department"]
+          id?: string
+          min_stock?: number
+          name: string
+          notes?: string | null
+          unit?: string
+          unit_price_idr?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          current_stock?: number
+          department?: Database["public"]["Enums"]["department"]
+          id?: string
+          min_stock?: number
+          name?: string
+          notes?: string | null
+          unit?: string
+          unit_price_idr?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department: Database["public"]["Enums"]["department"]
+          id: string
+          item_id: string
+          movement_type: Database["public"]["Enums"]["movement_type"]
+          notes: string | null
+          quantity: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department: Database["public"]["Enums"]["department"]
+          id?: string
+          item_id: string
+          movement_type: Database["public"]["Enums"]["movement_type"]
+          notes?: string | null
+          quantity: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department?: Database["public"]["Enums"]["department"]
+          id?: string
+          item_id?: string
+          movement_type?: Database["public"]["Enums"]["movement_type"]
+          notes?: string | null
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_department: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["department"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "kitchen" | "bar"
+      department: "kitchen" | "bar"
+      movement_type: "in" | "out"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +292,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "kitchen", "bar"],
+      department: ["kitchen", "bar"],
+      movement_type: ["in", "out"],
+    },
   },
 } as const
