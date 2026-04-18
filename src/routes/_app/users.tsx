@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Shield, ChefHat, Wine } from "lucide-react";
+import { Plus, Trash2, Shield, ChefHat, Wine, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +33,7 @@ function UsersPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [openForm, setOpenForm] = useState(false);
+  const [editUser, setEditUser] = useState<UserRow | null>(null);
 
   useEffect(() => {
     if (!loading && !isAdmin) navigate({ to: "/dashboard" });
@@ -138,32 +139,43 @@ function UsersPage() {
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
-                          {!isSelf && (
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive">
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Hapus user ini?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    User <strong>{u.profile?.email}</strong> akan kehilangan akses permanen ke sistem.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDelete(u.user_id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Hapus
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          )}
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              onClick={() => setEditUser(u)}
+                              title="Edit user"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            {!isSelf && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive">
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Hapus user ini?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      User <strong>{u.profile?.email}</strong> akan kehilangan akses permanen ke sistem.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(u.user_id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Hapus
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -176,7 +188,119 @@ function UsersPage() {
       </Card>
 
       <CreateUserDialog open={openForm} onOpenChange={setOpenForm} />
+      <EditUserDialog user={editUser} onOpenChange={(v) => !v && setEditUser(null)} />
     </div>
+  );
+}
+
+function EditUserDialog({
+  user,
+  onOpenChange,
+}: {
+  user: UserRow | null;
+  onOpenChange: (v: boolean) => void;
+}) {
+  const qc = useQueryClient();
+  const [busy, setBusy] = useState(false);
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    password: "",
+    role: "kitchen" as "admin" | "kitchen" | "bar",
+  });
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        full_name: user.profile?.full_name ?? "",
+        email: user.profile?.email ?? "",
+        password: "",
+        role: user.role,
+      });
+    }
+  }, [user]);
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    if (form.password && form.password.length < 8) {
+      toast.error("Kata sandi minimal 8 karakter");
+      return;
+    }
+    setBusy(true);
+    try {
+      const payload: Record<string, unknown> = { user_id: user.user_id };
+      if (form.full_name.trim() && form.full_name.trim() !== (user.profile?.full_name ?? "")) {
+        payload.full_name = form.full_name.trim();
+      }
+      if (form.email.trim() && form.email.trim() !== (user.profile?.email ?? "")) {
+        payload.email = form.email.trim();
+      }
+      if (form.password) payload.password = form.password;
+      if (form.role !== user.role) payload.role = form.role;
+
+      if (Object.keys(payload).length === 1) {
+        toast.info("Tidak ada perubahan");
+        setBusy(false);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("admin-update-user", {
+        body: payload,
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("User berhasil diperbarui");
+      qc.invalidateQueries({ queryKey: ["users-list"] });
+      onOpenChange(false);
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Dialog open={!!user} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Edit User</DialogTitle>
+          <DialogDescription>
+            Hanya Super Admin yang dapat mengubah data user. Kosongkan kata sandi jika tidak ingin diganti.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={submit} className="space-y-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="e-fn">Nama lengkap</Label>
+            <Input id="e-fn" required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="e-em">Email</Label>
+            <Input id="e-em" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="e-pw">Kata sandi baru (opsional, min. 8 karakter)</Label>
+            <Input id="e-pw" type="password" minLength={8} value={form.password} placeholder="Kosongkan jika tidak diubah"
+              onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Role</Label>
+            <Select value={form.role} onValueChange={(v: any) => setForm({ ...form, role: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="kitchen">Kitchen</SelectItem>
+                <SelectItem value="bar">Barista (Bar)</SelectItem>
+                <SelectItem value="admin">Super Admin</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Batal</Button>
+            <Button type="submit" disabled={busy}>{busy ? "Menyimpan..." : "Simpan perubahan"}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
