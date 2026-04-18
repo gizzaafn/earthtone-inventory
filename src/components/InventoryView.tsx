@@ -171,24 +171,27 @@ export function InventoryView({
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/40">
+                  <TableHead className="w-12 text-center">No.</TableHead>
                   <TableHead>Nama</TableHead>
                   <TableHead>Kategori</TableHead>
                   <TableHead className="text-right">Stok</TableHead>
                   <TableHead className="text-right">Min</TableHead>
                   <TableHead className="text-right">Harga/unit</TableHead>
+                  <TableHead className="whitespace-nowrap">Diperbarui</TableHead>
                   <TableHead className="text-right w-[200px]">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Memuat...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">Memuat...</TableCell></TableRow>
                 ) : filtered.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Belum ada barang.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">Belum ada barang.</TableCell></TableRow>
                 ) : (
-                  filtered.map((i) => {
+                  filtered.map((i, idx) => {
                     const low = Number(i.current_stock) <= Number(i.min_stock);
                     return (
                       <TableRow key={i.id}>
+                        <TableCell className="text-center text-muted-foreground tabular-nums">{idx + 1}</TableCell>
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
                             {low && <AlertTriangle className="h-4 w-4 text-warning shrink-0" />}
@@ -206,6 +209,12 @@ export function InventoryView({
                         </TableCell>
                         <TableCell className="text-right text-muted-foreground">
                           {formatIDR(Number(i.unit_price_idr))}
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap" title={formatDateTime(i.updated_at)}>
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {formatRelativeTime(i.updated_at)}
+                          </span>
                         </TableCell>
                         <TableCell>
                           <ItemActions
@@ -229,17 +238,22 @@ export function InventoryView({
             ) : filtered.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">Belum ada barang.</p>
             ) : (
-              filtered.map((i) => {
+              filtered.map((i, idx) => {
                 const low = Number(i.current_stock) <= Number(i.min_stock);
                 return (
                   <div key={i.id} className="rounded-lg border border-border p-3 bg-card">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="font-medium truncate flex items-center gap-1">
-                          {low && <AlertTriangle className="h-4 w-4 text-warning shrink-0" />}
-                          {i.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{i.category}</p>
+                      <div className="min-w-0 flex items-start gap-2">
+                        <span className="text-xs text-muted-foreground tabular-nums mt-0.5 shrink-0 w-6">
+                          {idx + 1}.
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-medium truncate flex items-center gap-1">
+                            {low && <AlertTriangle className="h-4 w-4 text-warning shrink-0" />}
+                            {i.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{i.category}</p>
+                        </div>
                       </div>
                       <Badge variant={low ? "destructive" : "secondary"}>
                         {formatNumber(Number(i.current_stock))} {i.unit}
@@ -247,6 +261,10 @@ export function InventoryView({
                     </div>
                     <div className="mt-2 text-xs text-muted-foreground">
                       Min: {formatNumber(Number(i.min_stock))} {i.unit} · {formatIDR(Number(i.unit_price_idr))}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground inline-flex items-center gap-1" title={formatDateTime(i.updated_at)}>
+                      <Clock className="h-3 w-3" />
+                      Diperbarui {formatRelativeTime(i.updated_at)}
                     </div>
                     <div className="mt-3">
                       <ItemActions
