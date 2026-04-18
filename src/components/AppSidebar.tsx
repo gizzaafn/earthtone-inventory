@@ -39,8 +39,8 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-2">
-          <div className="h-9 w-9 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center shrink-0">
-            <Coffee className="h-5 w-5" />
+          <div className="h-9 w-9 rounded-lg bg-card border border-sidebar-border flex items-center justify-center shrink-0 overflow-hidden">
+            <img src={vosaleLogo} alt="Vosale Cafe" className="h-full w-full object-contain" />
           </div>
           <div className="group-data-[collapsible=icon]:hidden">
             <p className="font-semibold text-sm leading-tight">Vosale Cafe</p>
