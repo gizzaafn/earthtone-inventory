@@ -33,6 +33,7 @@ function UsersPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [openForm, setOpenForm] = useState(false);
+  const [editUser, setEditUser] = useState<UserRow | null>(null);
 
   useEffect(() => {
     if (!loading && !isAdmin) navigate({ to: "/dashboard" });
@@ -138,32 +139,43 @@ function UsersPage() {
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
-                          {!isSelf && (
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive">
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Hapus user ini?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    User <strong>{u.profile?.email}</strong> akan kehilangan akses permanen ke sistem.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDelete(u.user_id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Hapus
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          )}
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              onClick={() => setEditUser(u)}
+                              title="Edit user"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            {!isSelf && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive">
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Hapus user ini?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      User <strong>{u.profile?.email}</strong> akan kehilangan akses permanen ke sistem.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(u.user_id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Hapus
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
