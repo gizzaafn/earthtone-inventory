@@ -36,7 +36,8 @@ function ReportsPage() {
   });
 
   const buildRows = () =>
-    items.map((i) => ({
+    items.map((i, idx) => ({
+      No: idx + 1,
       Nama: i.name,
       Kategori: i.category,
       Departemen: i.department === "kitchen" ? "Kitchen" : "Bar",
@@ -77,7 +78,7 @@ function ReportsPage() {
       const rows = buildRows();
       autoTable(doc, {
         startY: 32,
-        head: [Object.keys(rows[0] ?? { Nama: "", Kategori: "", Departemen: "", Satuan: "", "Stok Saat Ini": "", "Stok Minimum": "", "Harga/Unit (IDR)": "", "Total Nilai (IDR)": "", Status: "" })],
+        head: [Object.keys(rows[0] ?? { No: "", Nama: "", Kategori: "", Departemen: "", Satuan: "", "Stok Saat Ini": "", "Stok Minimum": "", "Harga/Unit (IDR)": "", "Total Nilai (IDR)": "", Status: "" })],
         body: rows.map((r) => Object.values(r).map((v) => String(v))),
         styles: { fontSize: 8 },
         headStyles: { fillColor: [111, 78, 55] }, // cokelat kayu
@@ -153,6 +154,7 @@ function ReportsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/40">
+                  <TableHead className="w-12">No</TableHead>
                   <TableHead>Nama</TableHead>
                   <TableHead className="hidden sm:table-cell">Kategori</TableHead>
                   <TableHead>Dept</TableHead>
@@ -163,14 +165,15 @@ function ReportsPage() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Memuat...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Memuat...</TableCell></TableRow>
                 ) : items.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Tidak ada data.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Tidak ada data.</TableCell></TableRow>
                 ) : (
-                  items.map((i) => {
+                  items.map((i, idx) => {
                     const low = Number(i.current_stock) <= Number(i.min_stock);
                     return (
                       <TableRow key={i.id}>
+                        <TableCell className="text-muted-foreground tabular-nums">{idx + 1}</TableCell>
                         <TableCell className="font-medium">{i.name}</TableCell>
                         <TableCell className="hidden sm:table-cell text-muted-foreground">{i.category}</TableCell>
                         <TableCell><Badge variant="secondary">{i.department === "kitchen" ? "Kitchen" : "Bar"}</Badge></TableCell>
