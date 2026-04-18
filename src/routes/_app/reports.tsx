@@ -36,7 +36,8 @@ function ReportsPage() {
   });
 
   const buildRows = () =>
-    items.map((i) => ({
+    items.map((i, idx) => ({
+      No: idx + 1,
       Nama: i.name,
       Kategori: i.category,
       Departemen: i.department === "kitchen" ? "Kitchen" : "Bar",
