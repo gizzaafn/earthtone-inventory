@@ -22,7 +22,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { formatIDR, formatNumber } from "@/lib/format";
+import { formatIDR, formatNumber, formatRelativeTime, formatDateTime } from "@/lib/format";
 
 type Department = "kitchen" | "bar";
 
