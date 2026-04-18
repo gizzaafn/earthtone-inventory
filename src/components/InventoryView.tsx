@@ -74,6 +74,33 @@ export function InventoryView({
     },
   });
 
+  // Tick every 30s so relative timestamps stay fresh on screen.
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 30_000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Realtime: refresh whenever items or movements change for this department.
+  useEffect(() => {
+    const channel = supabase
+      .channel(`inventory-${department}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "inventory_items", filter: `department=eq.${department}` },
+        () => qc.invalidateQueries({ queryKey: ["inventory", department] }),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "stock_movements", filter: `department=eq.${department}` },
+        () => qc.invalidateQueries({ queryKey: ["inventory", department] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [department, qc]);
+
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("inventory_items").delete().eq("id", id);
