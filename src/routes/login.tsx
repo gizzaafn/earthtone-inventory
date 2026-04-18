@@ -84,14 +84,7 @@ function LoginPage() {
                 {busy ? "Memproses..." : "Masuk"}
               </Button>
             </form>
-            {!adminExists && (
-              <p className="text-xs text-muted-foreground text-center mt-6">
-                Belum ada admin?{" "}
-                <Link to="/setup" className="text-primary hover:underline font-medium">
-                  Buat admin pertama
-                </Link>
-              </p>
-            )}
+
           </CardContent>
         </Card>
       </div>
