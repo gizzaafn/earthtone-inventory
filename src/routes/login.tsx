@@ -22,7 +22,9 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotBusy, setForgotBusy] = useState(false);
 
   if (isAuthenticated) {
     navigate({ to: "/dashboard" });
@@ -39,6 +41,28 @@ function LoginPage() {
       toast.error(err?.message ?? "Gagal masuk");
     } finally {
       setBusy(false);
+    }
+  };
+
+  const handleForgot = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail.trim()) {
+      toast.error("Masukkan email Anda");
+      return;
+    }
+    setForgotBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Tautan reset telah dikirim ke email Anda. Cek inbox/spam.");
+      setForgotOpen(false);
+      setForgotEmail("");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Gagal mengirim tautan reset");
+    } finally {
+      setForgotBusy(false);
     }
   };
 
