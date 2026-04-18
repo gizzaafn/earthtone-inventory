@@ -101,7 +101,16 @@ function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Kata sandi</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Kata sandi</Label>
+                  <button
+                    type="button"
+                    onClick={() => { setForgotEmail(email); setForgotOpen(true); }}
+                    className="text-xs text-primary hover:underline font-medium"
+                  >
+                    Lupa password?
+                  </button>
+                </div>
                 <Input
                   id="password"
                   type="password"
@@ -120,6 +129,39 @@ function LoginPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Lupa kata sandi?</DialogTitle>
+            <DialogDescription>
+              Masukkan email akun Anda. Kami akan mengirim tautan untuk mengatur ulang kata sandi.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleForgot} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="forgot-email">Email</Label>
+              <Input
+                id="forgot-email"
+                type="email"
+                required
+                autoComplete="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                placeholder="nama@vosale.cafe"
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setForgotOpen(false)}>
+                Batal
+              </Button>
+              <Button type="submit" disabled={forgotBusy}>
+                {forgotBusy ? "Mengirim..." : "Kirim tautan reset"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
