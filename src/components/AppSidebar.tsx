@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, ChefHat, Wine, FileBarChart, Users, LogOut, Coffee } from "lucide-react";
+import { LayoutDashboard, ChefHat, Wine, FileBarChart, Users, LogOut } from "lucide-react";
+import vosaleLogo from "@/assets/vosale-logo.png";
 import {
   Sidebar,
   SidebarContent,
