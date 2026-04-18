@@ -42,10 +42,14 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-background via-secondary to-background">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
-          <div className="h-16 w-16 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg mb-4">
-            <Coffee className="h-8 w-8" />
+          <div className="h-24 w-24 rounded-full bg-card border border-border/60 flex items-center justify-center shadow-lg mb-4 overflow-hidden">
+            <img
+              src={vosaleLogo}
+              alt="Logo Vosale Cafe"
+              className="h-full w-full object-contain p-1"
+            />
           </div>
-          <h1 className="text-3xl font-bold text-primary">Vosale Cafe</h1>
+          <h1 className="text-3xl font-bold text-primary tracking-tight">Vosale Cafe</h1>
           <p className="text-sm text-muted-foreground mt-1">Sistem Manajemen Inventaris</p>
         </div>
 
