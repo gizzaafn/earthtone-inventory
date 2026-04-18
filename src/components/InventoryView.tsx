@@ -36,6 +36,8 @@ interface Item {
   min_stock: number;
   unit_price_idr: number;
   notes: string | null;
+  updated_at: string;
+  created_at: string;
 }
 
 const KITCHEN_CATEGORIES = ["Bahan Pokok", "Sayur", "Daging", "Bumbu", "Lainnya"];
