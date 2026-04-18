@@ -78,7 +78,7 @@ function ReportsPage() {
       const rows = buildRows();
       autoTable(doc, {
         startY: 32,
-        head: [Object.keys(rows[0] ?? { Nama: "", Kategori: "", Departemen: "", Satuan: "", "Stok Saat Ini": "", "Stok Minimum": "", "Harga/Unit (IDR)": "", "Total Nilai (IDR)": "", Status: "" })],
+        head: [Object.keys(rows[0] ?? { No: "", Nama: "", Kategori: "", Departemen: "", Satuan: "", "Stok Saat Ini": "", "Stok Minimum": "", "Harga/Unit (IDR)": "", "Total Nilai (IDR)": "", Status: "" })],
         body: rows.map((r) => Object.values(r).map((v) => String(v))),
         styles: { fontSize: 8 },
         headStyles: { fillColor: [111, 78, 55] }, // cokelat kayu
