@@ -18,17 +18,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [adminExists, setAdminExists] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      const { count } = await supabase
-        .from("user_roles")
-        .select("*", { count: "exact", head: true })
-        .eq("role", "admin");
-      setAdminExists((count ?? 0) > 0);
-    })();
-  }, []);
 
   if (isAuthenticated) {
     navigate({ to: "/dashboard" });
