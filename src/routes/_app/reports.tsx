@@ -154,6 +154,7 @@ function ReportsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/40">
+                  <TableHead className="w-12">No</TableHead>
                   <TableHead>Nama</TableHead>
                   <TableHead className="hidden sm:table-cell">Kategori</TableHead>
                   <TableHead>Dept</TableHead>
@@ -164,14 +165,15 @@ function ReportsPage() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Memuat...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Memuat...</TableCell></TableRow>
                 ) : items.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Tidak ada data.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Tidak ada data.</TableCell></TableRow>
                 ) : (
-                  items.map((i) => {
+                  items.map((i, idx) => {
                     const low = Number(i.current_stock) <= Number(i.min_stock);
                     return (
                       <TableRow key={i.id}>
+                        <TableCell className="text-muted-foreground tabular-nums">{idx + 1}</TableCell>
                         <TableCell className="font-medium">{i.name}</TableCell>
                         <TableCell className="hidden sm:table-cell text-muted-foreground">{i.category}</TableCell>
                         <TableCell><Badge variant="secondary">{i.department === "kitchen" ? "Kitchen" : "Bar"}</Badge></TableCell>
