@@ -258,9 +258,9 @@ export function InventoryView({
                     <div className="mt-2 text-xs text-muted-foreground">
                       Min: {formatNumber(Number(i.min_stock))} {i.unit} · {formatIDR(Number(i.unit_price_idr))}
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground inline-flex items-center gap-1" title={formatDateTime(i.updated_at)}>
+                    <div className="mt-1 text-xs text-muted-foreground inline-flex items-center gap-1 tabular-nums" title={formatDateTime(i.updated_at)}>
                       <Clock className="h-3 w-3" />
-                      Diperbarui {formatRelativeTime(i.updated_at)}
+                      Diperbarui {formatDateTimeShort(i.updated_at)}
                     </div>
                     <div className="mt-3">
                       <ItemActions
