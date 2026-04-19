@@ -77,13 +77,6 @@ export function InventoryView({
     },
   });
 
-  // Tick every 30s so relative timestamps stay fresh on screen.
-  const [, setTick] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 30_000);
-    return () => clearInterval(id);
-  }, []);
-
   // Realtime: refresh whenever items or movements change for this department.
   useEffect(() => {
     const channel = supabase
