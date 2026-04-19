@@ -106,7 +106,25 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: (err as Error).message }), {
+    const e = err as { message?: string; code?: string };
+    console.error("[admin-update-user]", e);
+    const SAFE: Record<string, string> = {
+      "23505": "Email sudah digunakan oleh user lain.",
+    };
+    const allowList = new Set([
+      "Missing authorization",
+      "Invalid session",
+      "user_id wajib",
+      "Role tidak valid",
+      "Kata sandi minimal 8 karakter",
+      "Tidak bisa demote: Anda admin terakhir",
+    ]);
+    const msg = e.code && SAFE[e.code]
+      ? SAFE[e.code]
+      : e.message && allowList.has(e.message)
+        ? e.message
+        : "Terjadi kesalahan server, coba lagi.";
+    return new Response(JSON.stringify({ error: msg }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
