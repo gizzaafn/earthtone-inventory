@@ -38,13 +38,13 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-2 py-2">
-          <div className="h-9 w-9 rounded-lg bg-card border border-sidebar-border flex items-center justify-center shrink-0 overflow-hidden">
+        <div className="flex items-center gap-2 px-2 py-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+          <div className="h-9 w-9 rounded-lg bg-card border border-sidebar-border flex items-center justify-center shrink-0 overflow-hidden group-data-[collapsible=icon]:h-7 group-data-[collapsible=icon]:w-7 group-data-[collapsible=icon]:rounded-md">
             <img src={vosaleLogo} alt="Vosale Cafe" className="h-full w-full object-contain" />
           </div>
-          <div className="group-data-[collapsible=icon]:hidden">
-            <p className="font-semibold text-sm leading-tight">Vosale Cafe</p>
-            <p className="text-xs text-muted-foreground">Inventaris</p>
+          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
+            <p className="font-semibold text-sm leading-tight truncate">Vosale Cafe</p>
+            <p className="text-xs text-muted-foreground truncate">Inventaris</p>
           </div>
         </div>
       </SidebarHeader>
