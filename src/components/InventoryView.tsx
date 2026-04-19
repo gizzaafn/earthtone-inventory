@@ -206,10 +206,10 @@ export function InventoryView({
                         <TableCell className="text-right text-muted-foreground">
                           {formatIDR(Number(i.unit_price_idr))}
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap" title={formatDateTime(i.updated_at)}>
+                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap tabular-nums" title={formatDateTime(i.updated_at)}>
                           <span className="inline-flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {formatRelativeTime(i.updated_at)}
+                            {formatDateTimeShort(i.updated_at)}
                           </span>
                         </TableCell>
                         <TableCell>
