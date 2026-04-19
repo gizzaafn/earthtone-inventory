@@ -14,6 +14,14 @@ export const formatDateTime = (iso: string) =>
     timeStyle: "short",
   }).format(new Date(iso));
 
+/** Short date+time, e.g. "18 Apr, 14:32" — for compact table cells. */
+export const formatDateTimeShort = (iso: string) => {
+  const d = new Date(iso);
+  const date = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short" }).format(d);
+  const time = new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
+  return `${date}, ${time}`;
+};
+
 export const formatRelativeTime = (iso: string): string => {
   const then = new Date(iso).getTime();
   const now = Date.now();

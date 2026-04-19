@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Search, Pencil, Trash2, ArrowDownToLine, ArrowUpFromLine, AlertTriangle, Clock } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, ArrowDownToLine, ArrowUpFromLine, AlertTriangle, Clock, MoreHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,10 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { formatIDR, formatNumber, formatRelativeTime, formatDateTime } from "@/lib/format";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { formatIDR, formatNumber, formatDateTime, formatDateTimeShort } from "@/lib/format";
 
 type Department = "kitchen" | "bar";
 
@@ -73,13 +76,6 @@ export function InventoryView({
       return data as Item[];
     },
   });
-
-  // Tick every 30s so relative timestamps stay fresh on screen.
-  const [, setTick] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 30_000);
-    return () => clearInterval(id);
-  }, []);
 
   // Realtime: refresh whenever items or movements change for this department.
   useEffect(() => {
@@ -210,10 +206,10 @@ export function InventoryView({
                         <TableCell className="text-right text-muted-foreground">
                           {formatIDR(Number(i.unit_price_idr))}
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap" title={formatDateTime(i.updated_at)}>
+                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap tabular-nums" title={formatDateTime(i.updated_at)}>
                           <span className="inline-flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {formatRelativeTime(i.updated_at)}
+                            {formatDateTimeShort(i.updated_at)}
                           </span>
                         </TableCell>
                         <TableCell>
@@ -262,9 +258,9 @@ export function InventoryView({
                     <div className="mt-2 text-xs text-muted-foreground">
                       Min: {formatNumber(Number(i.min_stock))} {i.unit} · {formatIDR(Number(i.unit_price_idr))}
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground inline-flex items-center gap-1" title={formatDateTime(i.updated_at)}>
+                    <div className="mt-1 text-xs text-muted-foreground inline-flex items-center gap-1 tabular-nums" title={formatDateTime(i.updated_at)}>
                       <Clock className="h-3 w-3" />
-                      Diperbarui {formatRelativeTime(i.updated_at)}
+                      Diperbarui {formatDateTimeShort(i.updated_at)}
                     </div>
                     <div className="mt-3">
                       <ItemActions
@@ -312,25 +308,50 @@ function ItemActions({
   onMove: (type: "in" | "out") => void;
   onDelete: () => void;
 }) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
   return (
-    <div className="flex items-center justify-end gap-1 flex-wrap">
-      <Button size="sm" variant="outline" onClick={() => onMove("in")} className="h-8">
-        <ArrowDownToLine className="h-3.5 w-3.5 sm:mr-1" />
+    <div className="flex items-center justify-end gap-1.5">
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => onMove("in")}
+        className="h-8 border-success/40 text-success hover:bg-success/10 hover:text-success"
+      >
+        <ArrowDownToLine className="h-3.5 w-3.5 sm:mr-1.5" />
         <span className="hidden sm:inline">Masuk</span>
       </Button>
-      <Button size="sm" variant="outline" onClick={() => onMove("out")} className="h-8">
-        <ArrowUpFromLine className="h-3.5 w-3.5 sm:mr-1" />
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => onMove("out")}
+        className="h-8 border-warning/40 text-warning hover:bg-warning/10 hover:text-warning"
+      >
+        <ArrowUpFromLine className="h-3.5 w-3.5 sm:mr-1.5" />
         <span className="hidden sm:inline">Keluar</span>
       </Button>
-      <Button size="icon" variant="ghost" onClick={onEdit} className="h-8 w-8">
-        <Pencil className="h-3.5 w-3.5" />
-      </Button>
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive">
-            <Trash2 className="h-3.5 w-3.5" />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size="icon" variant="ghost" className="h-8 w-8" aria-label="Aksi lainnya">
+            <MoreHorizontal className="h-4 w-4" />
           </Button>
-        </AlertDialogTrigger>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem onClick={onEdit}>
+            <Pencil className="h-4 w-4 mr-2" />
+            Edit barang
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => setConfirmOpen(true)}
+            className="text-destructive focus:text-destructive"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Hapus
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Hapus "{item.name}"?</AlertDialogTitle>
